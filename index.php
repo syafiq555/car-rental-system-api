@@ -135,7 +135,8 @@
             '/checkemail',
             '/auth',
             '/users'
-         ], 
+         ],
+         'secure' => false,
         'authenticator' => $authenticator
    ]));
 
