@@ -1,5 +1,6 @@
 <?php
 
+   include_once('models/Base.php');
    include_once('models/User.php');
    include_once('models/Order.php');
    include_once('models/Car.php');
@@ -109,20 +110,32 @@
          } 
       }
 
-      function insertUser($login, $clearpassword, $name, $email) {
+      function insertUser(User $user) {
 
          //hash the password using one way md5 hashing
-         $passwordhash = salt($clearpassword);
+         $passwordhash = salt($user->password);
          try {
             
-            $sql = "INSERT INTO users(login, password, name, email, addeddate) 
-                    VALUES (:login, :password, :name, :email, NOW())";
+            $sql = "
+               INSERT INTO users(
+                  first_name, last_name, 
+                  username, password, email, role, 
+                  ic_number, mobile_phones
+               ) 
+               VALUES (:first_name, :last_name, 
+                  :username, :password, :email, 
+                  :role, :ic_number, :c, 
+               )";
 
             $stmt = $this->db->prepare($sql);  
-            $stmt->bindParam("login", $login);
-            $stmt->bindParam("password", $passwordhash);
-            $stmt->bindParam("name", $name);
-            $stmt->bindParam("email", $email);
+            $stmt->bindParam("first_name", $user->first_name);
+            $stmt->bindParam("last_name", $user->last_name);
+            $stmt->bindParam("username", $user->username);
+            $stmt->bindParam("password", $user->password);
+            $stmt->bindParam("email", $user->email);
+            $stmt->bindParam("role", $user->role);
+            $stmt->bindParam("ic_number", $user->ic_number);
+            $stmt->bindParam("mobile_phone", $user->mobile_phone);
             $stmt->execute();
 
             $dbs = new DbStatus();
@@ -155,13 +168,13 @@
          return $row_count;
       }
 
-      function authenticateUser($login) {
-         $sql = "SELECT login, password as passwordhash
+      function authenticateUser($username) {
+         $sql = "SELECT username, password as passwordhash
                  FROM users
-                 WHERE login = :login";        
+                 WHERE username = :username";        
 
          $stmt = $this->db->prepare($sql);
-         $stmt->bindParam("login", $login);
+         $stmt->bindParam("username", $username);
          $stmt->execute(); 
          $row_count = $stmt->rowCount(); 
 
@@ -170,47 +183,12 @@
          if ($row_count) {
             while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                $user = new User();
-               $user->login = $row['login'];
-               $user->passwordhash = $row['passwordhash'];
+               $user->username = $row['username'];
+               $user->password = $row['password'];
             }
          }
 
          return $user;
-      }
-
-      /////////////////////////////////////////////////////////////////////////////////// contacts
-
-      // insert contact
-      function insertContact($name, $email, $mobileno, $ownerlogin) {
-
-         try {
-            
-            $sql = "INSERT INTO contacts(name, email, mobileno, ownerlogin, addeddate) 
-                    VALUES (:name, :email, :mobileno, :ownerlogin, NOW())";
-
-            $stmt = $this->db->prepare($sql);  
-            $stmt->bindParam("name", $name);
-            $stmt->bindParam("email", $email);
-            $stmt->bindParam("mobileno", $mobileno);
-            $stmt->bindParam("ownerlogin", $ownerlogin);
-            $stmt->execute();
-
-            $dbs = new DbStatus();
-            $dbs->status = true;
-            $dbs->error = "none";
-            $dbs->lastinsertid = $this->db->lastInsertId();
-
-            return $dbs;
-         }
-         catch(PDOException $e) {
-            $errorMessage = $e->getMessage();
-
-            $dbs = new DbStatus();
-            $dbs->status = false;
-            $dbs->error = $errorMessage;
-
-            return $dbs;
-         }          
       }
 
       function getAllUsers() {
@@ -230,11 +208,13 @@
             {
                $user = new User();
                $user->id = $row['id'];
-               $user->login = $row['login'];
-               $user->name = $row['name'];
+               $user->username = $row['username'];
+               $user->first_name = $row['first_name'];
+               $user->last_name = $row['last_name'];
                $user->email = $row['email'];
-               $user->mobileno = $row['mobileno'];
-               $user->photo = $row['photo'];
+               $user->mobile_phone = $row['mobile_phone'];
+               $user->ic_number = $row['ic_number'];
+               $user->role = $row['role'];
 
                array_push($data, $user);
             }
@@ -242,134 +222,5 @@
 
          return $data;
       }
-
-      //get all contacts
-      function getAllContactsViaLogin($ownerlogin) {
-         $sql = "SELECT *
-                 FROM contacts
-                 WHERE ownerlogin = :ownerlogin";
-
-         $stmt = $this->db->prepare($sql);
-         $stmt->bindParam("ownerlogin", $ownerlogin);
-         $stmt->execute(); 
-         $row_count = $stmt->rowCount();
-
-         $data = array();
-
-         if ($row_count)
-         {
-            while($row = $stmt->fetch(PDO::FETCH_ASSOC))
-            {
-               $contact = new Contact();
-               $contact->id = $row['id'];
-               $contact->name = $row['name'];
-               $contact->email = $row['email'];
-               $contact->mobileno = $row['mobileno'];
-               $contact->photo = $row['photo'];
-
-               $addeddate = $row['addeddate'];
-               $contact->addeddate = time_elapsed_string($addeddate); 
-
-               $contact->status = $row['status'];  
-
-               array_push($data, $contact);
-            }
-         }
-
-         return $data;
-      }
-
-      //get single contact
-      function getContactViaId($id, $ownerlogin) {
-         $sql = "SELECT *
-                 FROM contacts
-                 WHERE id = :id
-                 AND ownerlogin = :ownerlogin";
-
-         $stmt = $this->db->prepare($sql);
-         $stmt->bindParam("id", $id);
-         $stmt->bindParam("ownerlogin", $ownerlogin);
-         $stmt->execute(); 
-         $row_count = $stmt->rowCount();
-
-         $contact = new Contact();
-
-         if ($row_count)
-         {
-            while($row = $stmt->fetch(PDO::FETCH_ASSOC))
-            {               
-               $contact->id = $row['id'];
-               $contact->name = $row['name'];
-               $contact->email = $row['email'];
-               $contact->mobileno = $row['mobileno'];
-               $contact->photo = $row['photo'];
-
-               $addeddate = $row['addeddate'];
-               $contact->addeddate = time_elapsed_string($addeddate);  
-            }
-         }
-
-         return $contact;
-      }
-
-      //update contact via id
-      function updateContactViaId($id, $name, $email, $mobileno) {
-
-         $sql = "UPDATE contacts
-                 SET name = :name,
-                     email = :email,
-                     mobileno = :mobileno
-                 WHERE id = :id";
-
-         try {
-            $stmt = $this->db->prepare($sql);  
-            $stmt->bindParam("id", $id);
-            $stmt->bindParam("name", $name);
-            $stmt->bindParam("email", $email);
-            $stmt->bindParam("mobileno", $mobileno);
-            $stmt->execute();
-
-            $dbs = new DbStatus();
-            $dbs->status = true;
-            $dbs->error = "none";
-
-            return $dbs;
-         }
-         catch(PDOException $e) {
-            $errorMessage = $e->getMessage();
-
-            $dbs = new DbStatus();
-            $dbs->status = false;
-            $dbs->error = $errorMessage;
-
-            return $dbs;
-         } 
-      } 
-
-      //delete contact via id
-      function deleteContactViaId($id) {
-
-         $dbstatus = new DbStatus();
-
-         $sql = "DELETE 
-                 FROM contacts 
-                 WHERE id = :id";
-
-         try {
-            $stmt = $this->db->prepare($sql); 
-            $stmt->bindParam("id", $id);
-            $stmt->execute();
-
-            $dbstatus->status = true;
-            $dbstatus->error = "none";
-            return $dbstatus;
-         }
-         catch(PDOException $e) {
-            $errorMessage = $e->getMessage();
-
-            $dbstatus->status = false;
-            $dbstatus->error = $errorMessage;
-            return $dbstatus;
-         }           
-      } 
+      
    }

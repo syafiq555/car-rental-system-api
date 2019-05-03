@@ -2,7 +2,7 @@
 include_once('Manufacturer.php');
 include_once('Base.php');
 
-class Manufacturer extends Base{
+class Model extends Base{
   private $id;
   private $manufacturer_name;
 

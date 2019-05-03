@@ -1,6 +1,6 @@
 <?php
 
-abstract class Model{
+abstract class Base{
   public function __get($name) {
     return $this->$name;
   }
