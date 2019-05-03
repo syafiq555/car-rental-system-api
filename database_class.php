@@ -1,23 +1,10 @@
 <?php
 
-   class User {
-      var $id;
-      var $login;
-      var $name;
-      var $email;
-      var $mobileno;
-      var $photo;
-   }
-
-   class Contact {
-      var $id;
-      var $name;
-      var $email;
-      var $mobileno;
-      var $photo;
-      var $addeddate;
-      var $status;
-   }
+   include_once('models/User.php');
+   include_once('models/Order.php');
+   include_once('models/Car.php');
+   include_once('models/Manufacturer.php');
+   include_once('models/Model.php');
 
    class DbStatus {
       var $status;
