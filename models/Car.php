@@ -1,7 +1,8 @@
 <?php
 include_once('Model.php');
+include_once('Base.php');
 
-class Car {
+class Car extends Base{
   private $id;
   private $plate_number;
   private $price_per_hour;
@@ -10,13 +11,5 @@ class Car {
 
   public function __construct(Model $model) {
     $this->model = $model;
-  }
-
-  public function __get($name) {
-    return $this->$name;
-  }
-
-  public function __set($name, $value) {
-      $this->$name = $value;
   }
 }
