@@ -10,6 +10,7 @@ class User extends Base {
   private $password;
   private $role;
   private $ic_number;
+  private $mobile_phone;
 
   public function __construct() {
 

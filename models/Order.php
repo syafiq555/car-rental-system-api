@@ -9,6 +9,10 @@ class Order extends Base{
   private $user;
   private $approved;
   private $total_price;
+  private $date_to;
+  private $date_from;
+  private $time_to;
+  private $time_from;
 
   public function __construct(Car $car, User $user) {
     $this->car = $car;
