@@ -111,7 +111,26 @@
 
       function insertUser(User $user) {
          try {
+            $dbs = new DbStatus();
+
+            $dbs->status = false;
+            $dbs->error = "none";
+            $dbs->lastinsertid = null;
+
+            $isValid = $this->checkUsername($user->username);
+
+            if ($isValid != 0){
+               $dbs->error = "Username already exist";
+               return $dbs;
+            }
+
+            $isValid = $this->checkemail($user->email);
             
+            if ($isValid != 0){
+               $dbs->error = "Email already exist";
+               return $dbs;
+            }
+
             $sql = "INSERT INTO users(
                      first_name, last_name, username, password, email, 
                      role, ic_number, mobile_phone
@@ -132,7 +151,6 @@
             $stmt->bindParam("mobile_phone", $user->mobile_phone);
             $stmt->execute();
 
-            $dbs = new DbStatus();
             $dbs->status = true;
             $dbs->error = "none";
             $dbs->lastinsertid = $this->db->lastInsertId();
@@ -148,6 +166,16 @@
 
             return $dbs;
          } 
+      }
+
+      function checkUsername($username) {
+         $sql = "SELECT * FROM users WHERE username = :username";
+         
+         $stmt = $this->db->prepare($sql);
+         $stmt->bindParam("username", $username);
+         $stmt->execute();
+         $row_count = $stmt->rowCount();
+         return $row_count;
       }
 
       function checkemail($email) {
