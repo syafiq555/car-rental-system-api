@@ -45,10 +45,10 @@
    //$jwtSecretKey = "jwt_secret_key";
 
    function getDatabase() {
-      $dbhost="localhost";
-      $dbuser="root";
-      $dbpass="";
-      $dbname="car-rental-system";
+      $dbhost= getenv('DB_HOST') ?: "localhost";
+      $dbuser= getenv('DB_USERNAME') ?: "root";
+      $dbpass= getenv('DB_PASSWORD') ?: "";
+      $dbname= getenv('DB_TABLE') ?: "car-rental-system";
 
       $db = new Database($dbhost, $dbuser, $dbpass, $dbname);
       return $db;
@@ -259,7 +259,7 @@
       $user->last_name = $json->last_name;
       $user->email = $json->email;
       $user->password = $json->password;
-      $user->role = $json->role;
+      $user->role = 'member';
       $user->ic_number = $json->ic_number;
       $user->mobile_phone = $json->mobile_phone;
 
@@ -269,7 +269,6 @@
       $db->close();
 
       $data = array(
-         "dbs" => $dbs,
          "insertstatus" => $dbs->status,
          "error" => $dbs->error
       ); 
@@ -312,7 +311,7 @@
    $app->post('/auth', function($request, $response){
       //extract form data - email and password
       $json = json_decode($request->getBody());
-      $login = $json->login;
+      $username = $json->username;
       $clearpassword = $json->password;
 
       //do db authentication
@@ -324,14 +323,13 @@
       //status 0 -> wrong password
       //status 1 -> login success
 
-      $returndata = array(
-      );
+      $returndata = [];
 
       //user not found
       if ($data === NULL) {
-         $returndata = array(
+         $returndata = [
             'status' => -1
-         );           
+         ];           
       }
       //user found
       else {
@@ -344,19 +342,19 @@
             $jwtIAT = date_timestamp_get($date);
             $jwtExp = $jwtIAT + (60 * 60 * 12); //expire after 12 hours
 
-            $jwtToken = array(
+            $jwtToken = [
                "iss" => "mycontacts.net", //token issuer
                "iat" => $jwtIAT, //issued at time
                "exp" => $jwtExp, //expire
                "role" => "member",
-               "login" => $data->login
-            );
+               "username" => $data->username
+            ];
             $token = JWT::encode($jwtToken, getenv('JWT_SECRET'));
 
             $returndata = array(
                'status' => 1,
                'token' => $token,
-               'login' => $data->login
+               'username' => $data->username
             );                
          } else {
             //wrong password
