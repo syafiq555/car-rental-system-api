@@ -1,7 +1,6 @@
 <?php
-include_once('Base.php');
 
-class Manufacturer extends Base{
+class Manufacturer {
   private $id;
   private $manufacturer_name;
 

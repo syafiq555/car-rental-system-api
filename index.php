@@ -185,13 +185,13 @@
       $jwtIAT = date_timestamp_get($date);
       $jwtExp = $jwtIAT + (20 * 60); //expire after 20 minutes
 
-      $jwtToken = array(
+      $jwtToken = [
          "iss" => "rbk.net", //client key
          "iat" => $jwtIAT, //issued at time
          "exp" => $jwtExp, //expire
          "role" => "member",
          "email" => "email@gmail.com"
-      );
+      ];
       $token = JWT::encode($jwtToken, getenv('JWT_SECRET'));
 
       //in case dotenv not working
@@ -253,17 +253,23 @@
      */
    $app->post('/registration', function($request, $response){
       $json = json_decode($request->getBody());
-      $name = $json->name;
-      $login = $json->login;
-      $email = $json->email;
-      $clearpassword = $json->password;
+      $user = new User();
+      $user->username = $json->username;
+      $user->first_name = $json->first_name;
+      $user->last_name = $json->last_name;
+      $user->email = $json->email;
+      $user->password = $json->password;
+      $user->role = $json->role;
+      $user->ic_number = $json->ic_number;
+      $user->mobile_phone = $json->mobile_phone;
 
       //insert user
       $db = getDatabase();
-      $dbs = $db->insertUser($login, $clearpassword, $name, $email);
+      $dbs = $db->insertUser($user);
       $db->close();
 
       $data = array(
+         "dbs" => $dbs,
          "insertstatus" => $dbs->status,
          "error" => $dbs->error
       ); 

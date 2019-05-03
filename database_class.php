@@ -1,6 +1,5 @@
 <?php
 
-   include_once('models/Base.php');
    include_once('models/User.php');
    include_once('models/Order.php');
    include_once('models/Car.php');
@@ -111,27 +110,22 @@
       }
 
       function insertUser(User $user) {
-
-         //hash the password using one way md5 hashing
-         $passwordhash = salt($user->password);
          try {
             
-            $sql = "
-               INSERT INTO users(
-                  first_name, last_name, 
-                  username, password, email, role, 
-                  ic_number, mobile_phones
-               ) 
-               VALUES (:first_name, :last_name, 
-                  :username, :password, :email, 
-                  :role, :ic_number, :c, 
-               )";
+            $sql = "INSERT INTO users(
+                     first_name, last_name, username, password, email, 
+                     role, ic_number, mobile_phone
+                  ) 
+                  VALUES (:first_name, :last_name, 
+                     :username, :password, :email, 
+                     :role, :ic_number, :mobile_phone
+                  )";
 
             $stmt = $this->db->prepare($sql);  
             $stmt->bindParam("first_name", $user->first_name);
             $stmt->bindParam("last_name", $user->last_name);
             $stmt->bindParam("username", $user->username);
-            $stmt->bindParam("password", $user->password);
+            $stmt->bindParam("password", salt($user->password));
             $stmt->bindParam("email", $user->email);
             $stmt->bindParam("role", $user->role);
             $stmt->bindParam("ic_number", $user->ic_number);

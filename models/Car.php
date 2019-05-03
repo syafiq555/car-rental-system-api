@@ -1,8 +1,6 @@
 <?php
-include_once('Model.php');
-include_once('Base.php');
 
-class Car extends Base{
+class Car {
   private $id;
   private $plate_number;
   private $price_per_hour;
