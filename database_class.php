@@ -191,7 +191,7 @@
       }
 
       function authenticateUser($username) {
-         $sql = "SELECT username, password as passwordhash
+         $sql = "SELECT username, password
                  FROM users
                  WHERE username = :username";        
 

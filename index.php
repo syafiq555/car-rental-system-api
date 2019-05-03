@@ -45,10 +45,10 @@
    //$jwtSecretKey = "jwt_secret_key";
 
    function getDatabase() {
-      $dbhost= getenv('DB_HOST') ?: "localhost";
-      $dbuser= getenv('DB_USERNAME') ?: "root";
-      $dbpass= getenv('DB_PASSWORD') ?: "";
-      $dbname= getenv('DB_TABLE') ?: "car-rental-system";
+      $dbhost= getenv('DB_HOST');
+      $dbuser= getenv('DB_USERNAME');
+      $dbpass= getenv('DB_PASSWORD');
+      $dbname= getenv('DB_TABLE');
 
       $db = new Database($dbhost, $dbuser, $dbpass, $dbname);
       return $db;
@@ -316,7 +316,7 @@
 
       //do db authentication
       $db = getDatabase();
-      $data = $db->authenticateUser($login);
+      $data = $db->authenticateUser($username);
       $db->close();
 
       //status -1 -> user not found
@@ -334,7 +334,7 @@
       //user found
       else {
          //now verify password hash - one way mdf hash using salt-peper
-         if (pepper($clearpassword, $data->passwordhash)) {
+         if (pepper($clearpassword, $data->password)) {
             //correct password
       
             //create JWT token

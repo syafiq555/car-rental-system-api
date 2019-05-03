@@ -11,11 +11,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
-
--- Dumping database structure for car-rental-system
-CREATE DATABASE IF NOT EXISTS `car-rental-system` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `car-rental-system`;
-
 -- Dumping structure for table car-rental-system.cars
 CREATE TABLE IF NOT EXISTS `cars` (
   `id` int(100) unsigned NOT NULL AUTO_INCREMENT,
@@ -27,6 +22,7 @@ CREATE TABLE IF NOT EXISTS `cars` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 -- Dumping data for table car-rental-system.cars: ~1 rows (approximately)
+DELETE FROM `cars`;
 /*!40000 ALTER TABLE `cars` DISABLE KEYS */;
 INSERT INTO `cars` (`id`, `plate_number`, `price_per_hour`, `model_id`, `year`) VALUES
 	(1, 'wjy3291', 100, 2, '2019');
@@ -40,6 +36,7 @@ CREATE TABLE IF NOT EXISTS `manufacturers` (
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 -- Dumping data for table car-rental-system.manufacturers: ~2 rows (approximately)
+DELETE FROM `manufacturers`;
 /*!40000 ALTER TABLE `manufacturers` DISABLE KEYS */;
 INSERT INTO `manufacturers` (`id`, `manufacturer_name`) VALUES
 	(1, 'toyota'),
@@ -55,6 +52,7 @@ CREATE TABLE IF NOT EXISTS `models` (
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 -- Dumping data for table car-rental-system.models: ~2 rows (approximately)
+DELETE FROM `models`;
 /*!40000 ALTER TABLE `models` DISABLE KEYS */;
 INSERT INTO `models` (`id`, `manufacturer_id`, `model_name`) VALUES
 	(1, 2, 'X4'),
@@ -76,6 +74,7 @@ CREATE TABLE IF NOT EXISTS `orders` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Dumping data for table car-rental-system.orders: ~0 rows (approximately)
+DELETE FROM `orders`;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 
@@ -93,7 +92,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
--- Dumping data for table car-rental-system.users: ~0 rows (approximately)
+-- Dumping data for table car-rental-system.users: ~2 rows (approximately)
+DELETE FROM `users`;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `username`, `password`, `email`, `role`, `ic_number`, `mobile_phone`) VALUES
 	(1, 'lol', 'lol', 'admin', 'e5e9fa1ba31ecd1adcd6e363f90bc81930ecb705fba15d03f3f167dfe84f75caaa474f3a663f05f4n16', 'admin@admin.com', 'admin', '960910-56-5237', '0169431276'),
