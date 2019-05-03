@@ -45,10 +45,10 @@
    //$jwtSecretKey = "jwt_secret_key";
 
    function getDatabase() {
-      $dbhost="us-cdbr-iron-east-02.cleardb.net";
-      $dbuser="bb0b59c05c8dac";
-      $dbpass="c3a9fc28";
-      $dbname="heroku_879c15087e14ba5";
+      $dbhost="localhost";
+      $dbuser="root";
+      $dbpass="";
+      $dbname="car-rental-system";
 
       $db = new Database($dbhost, $dbuser, $dbpass, $dbname);
       return $db;
