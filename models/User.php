@@ -1,6 +1,7 @@
 <?php
+include_once('Base.php');
 
-class User {
+class User extends Base {
   private $id;
   private $username;
   private $first_name;
