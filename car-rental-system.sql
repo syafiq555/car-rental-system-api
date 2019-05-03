@@ -68,6 +68,10 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `user_id` int(100) DEFAULT NULL,
   `approved` int(1) NOT NULL DEFAULT '0',
   `total_price` int(100) DEFAULT NULL,
+  `date_from` date DEFAULT NULL,
+  `date_to` date DEFAULT NULL,
+  `time_from` date DEFAULT NULL,
+  `time_to` date DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -81,17 +85,19 @@ CREATE TABLE IF NOT EXISTS `users` (
   `first_name` varchar(100) DEFAULT NULL,
   `last_name` varchar(100) DEFAULT NULL,
   `username` varchar(100) NOT NULL,
-  `password` tinytext NOT NULL,
+  `password` varchar(100) DEFAULT NULL,
   `email` tinytext NOT NULL,
-  `role` int(1) unsigned NOT NULL DEFAULT '0',
+  `role` varchar(50) NOT NULL DEFAULT '0',
   `ic_number` tinytext NOT NULL,
+  `mobile_phone` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
--- Dumping data for table car-rental-system.users: ~1 rows (approximately)
+-- Dumping data for table car-rental-system.users: ~0 rows (approximately)
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` (`id`, `first_name`, `last_name`, `username`, `password`, `email`, `role`, `ic_number`) VALUES
-	(1, 'syafiq', 'shamsuddin', 'syafiq', 'hashedPassword', 'syafiq@mail.com', 1, '978789878767');
+INSERT INTO `users` (`id`, `first_name`, `last_name`, `username`, `password`, `email`, `role`, `ic_number`, `mobile_phone`) VALUES
+	(1, 'lol', 'lol', 'admin', 'e5e9fa1ba31ecd1adcd6e363f90bc81930ecb705fba15d03f3f167dfe84f75caaa474f3a663f05f4n16', 'admin@admin.com', 'admin', '960910-56-5237', '0169431276'),
+	(2, 'lol', 'lol', 'hehe', 'e5e9fa1ba31ecd1ae84f75cadcd6e363f90bc81930ecb705fba15d03f3f167dfaa474f3a663f05f4n24', 'hehe@lol.com', 'member', '960910-56-5237', '0169431276');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
