@@ -172,6 +172,7 @@
      */
    $app->post('/registration', function($request, $response){
       $json = json_decode($request->getBody());
+      return $response->withJson($json);
       $user = new User();
       $user->username = $json->username;
       $user->first_name = $json->first_name;
