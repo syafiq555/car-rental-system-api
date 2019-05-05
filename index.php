@@ -181,7 +181,7 @@
       $user->role = 'member';
       $user->ic_number = $json->ic_number;
       $user->mobile_phone = $json->mobile_phone;
-
+      return $response->withJson($user);
       //insert user
       $db = getDatabase();
       $dbs = $db->insertUser($user);
