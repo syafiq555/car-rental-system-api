@@ -191,7 +191,7 @@
       }
 
       function authenticateUser($username) {
-         $sql = "SELECT username, password
+         $sql = "SELECT username, password, role
                  FROM users
                  WHERE username = :username";        
 
@@ -207,6 +207,7 @@
                $user = new User();
                $user->username = $row['username'];
                $user->password = $row['password'];
+               $user->role = $row['role'];
             }
          }
 
