@@ -1,5 +1,6 @@
 <?php
-
+   include_once('interfaces/iManufacturer.php');
+   include_once('interfaces/iModel.php');
    include_once('models/User.php');
    include_once('models/Order.php');
    include_once('models/Car.php');
@@ -212,6 +213,44 @@
          }
 
          return $user;
+      }
+
+      function getAllCars() {
+
+         $sql = "SELECT 
+            c.id as car_id, 
+            c.plate_number, 
+            c.price_per_hour, 
+            m.model_name, 
+            ma.manufacturer_name
+            FROM cars c
+            join models m on c.model_id = m.id
+            join manufacturers ma on m.manufacturer_id = ma.id";
+
+         $stmt = $this->db->prepare($sql);
+         $stmt->execute(); 
+         $row_count = $stmt->rowCount();
+
+         $data = [];
+
+         if ($row_count)
+         {
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC))
+            {
+               $manufacturer = new Manufacturer();
+               $manufacturer->manufacturer_name = $row['manufacturer_name'];
+               $model = new Model($manufacturer);
+               $model->model_name = $row['model_name'];
+               $car = new Car($model);
+               $car->plate_number = $row['plate_number'];
+               $car->id = $row['car_id'];
+               $car->price_per_hour = $row['price_per_hour'];
+
+               array_push($data, $car);
+            }
+         }
+
+         return $data;
       }
 
       function getAllUsers() {
