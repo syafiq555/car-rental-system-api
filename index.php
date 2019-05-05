@@ -126,99 +126,18 @@
    $app->add(new TokenAuthentication([
         'path' => '/', //secure route - need token
         'passthrough' => [ //public route, no token needed
-            '/ping', 
-            '/token', 
-            '/uuid',
             '/hello',
             '/calc',
             '/registration',
             '/checkemail',
             '/auth',
-            '/users'
+            '/users',
+            '/get_all_cars'
          ],
          'secure' => false,
         'authenticator' => $authenticator
    ]));
-
-   /**
-     * Public route example
-     */
-   $app->get('/ping', function($request, $response){
-      $output = ['msg' => 'RESTful API works, active and online!'];
-      return $response->withJson($output, 200, JSON_PRETTY_PRINT);
-   });
-
-   $app->get('/uuid', function($request, $response) {
-
-      try {
-
-          // Generate a version 1 (time-based) UUID object
-          //$uuid1 = Uuid::uuid1();
-          //echo $uuid1->toString() . "\n"; // i.e. e4eaaaf2-d142-11e1-b3e4-080027620cdd
-
-          // Generate a version 3 (name-based and hashed with MD5) UUID object
-          $uuid3 = Uuid::uuid3(Uuid::NAMESPACE_DNS, 'php.net');
-          echo $uuid3->toString() . "<br />"; // i.e. 11a38b9a-b3da-360f-9353-a5a725514269
-
-          // Generate a version 4 (random) UUID object
-          $uuid4 = Uuid::uuid4();
-          echo $uuid4->toString() . "<br />"; // i.e. 25769c6c-d34d-4bfe-ba98-e0ee856f3e7a
-
-          // Generate a version 5 (name-based and hashed with SHA1) UUID object
-          $uuid5 = Uuid::uuid5(Uuid::NAMESPACE_DNS, 'php.net');
-          echo $uuid5->toString() . "\n"; // i.e. c4a760a8-dbcf-5254-a0d9-6a4474bd1b62
-
-      } catch (UnsatisfiedDependencyException $e) {
-
-          // Some dependency was not met. Either the method cannot be called on a
-          // 32-bit system, or it can, but it relies on Moontoast\Math to be present.
-          echo 'Caught exception: ' . $e->getMessage() . "\n";
-
-      }
-   });
-
-   //generate token
-   //OAUTH2 token will not need this route
-   $app->get('/token', function($request, $response){
-      //create JWT token
-      $date = date_create();
-      $jwtIAT = date_timestamp_get($date);
-      $jwtExp = $jwtIAT + (20 * 60); //expire after 20 minutes
-
-      $jwtToken = [
-         "iss" => "car_rental_system.net", //client key
-         "iat" => $jwtIAT, //issued at time
-         "exp" => $jwtExp, //expire
-         "role" => "member",
-         "email" => "email@gmail.com"
-      ];
-      $token = JWT::encode($jwtToken, getenv('JWT_SECRET'));
-
-      //in case dotenv not working
-      //$token = JWT::encode($jwtToken, $GLOBALS['jwtSecretKey']);
-
-      $data = array(
-         'session' => true,
-         'token' => $token
-      );
-
-      return $response->withJson($data, 200)
-                      ->withHeader('Content-type', 'application/json');
-   });
-
-   //route with jwt token needed
-   $app->get('/jwtroute', function($request, $response){
-
-      $email = getEmailTokenPayload($request, $response);
-
-      $data = array(
-         'msg' => 'JWT Token authentication works!',
-         'email' => $email
-      );
-
-      return $response->withJson($data, 200, JSON_PRETTY_PRINT);
-   });
-
+   
    //public route with 1 parameter
    $app->get('/hello/[{name}]', function($request, $response, $args){
 
@@ -275,7 +194,24 @@
 
       return $response->withJson($data, 200)
                       ->withHeader('Content-type', 'application/json'); 
-   });  
+   });
+
+   $app->get('/get_all_cars', function($request, $response, $args) {
+      $db = getDatabase();
+      $data = $db->getAllCars();
+      $db->close();
+
+      if (sizeof($data) == 0) {
+         $returnData = [
+            message => 'No cars available'
+         ];
+         return $response->withJson($returnData, 200)
+                      ->withHeader('Content-type', 'application/json'); 
+      }
+
+      return $response->withJson($data, 200)
+                      ->withHeader('Content-type', 'application/json');
+   });
 
    /**
      * Public route /checkemail/:email for checking email availability
@@ -329,7 +265,7 @@
       if ($data === NULL) {
          $returndata = [
             'status' => -1
-         ];           
+         ];     
       }
       //user found
       else {
