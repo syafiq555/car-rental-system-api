@@ -186,7 +186,7 @@
       $jwtExp = $jwtIAT + (20 * 60); //expire after 20 minutes
 
       $jwtToken = [
-         "iss" => "rbk.net", //client key
+         "iss" => "car_rental_system.net", //client key
          "iat" => $jwtIAT, //issued at time
          "exp" => $jwtExp, //expire
          "role" => "member",
@@ -343,18 +343,17 @@
             $jwtExp = $jwtIAT + (60 * 60 * 12); //expire after 12 hours
 
             $jwtToken = [
-               "iss" => "mycontacts.net", //token issuer
+               "iss" => "car_rental_system.net", //token issuer
                "iat" => $jwtIAT, //issued at time
                "exp" => $jwtExp, //expire
-               "role" => "member",
-               "username" => $data->username
+               "role" => $data->role
             ];
             $token = JWT::encode($jwtToken, getenv('JWT_SECRET'));
 
             $returndata = array(
                'status' => 1,
                'token' => $token,
-               'username' => $data->username
+               'role' => $data->role
             );                
          } else {
             //wrong password
