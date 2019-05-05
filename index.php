@@ -198,10 +198,10 @@
 
    $app->get('/get_all_cars', function($request, $response, $args) {
       $db = getDatabase();
-      $data = $db->getAllCars();
+      $cars = $db->getAllCars();
       $db->close();
 
-      if (sizeof($data) == 0) {
+      if (sizeof($cars) == 0) {
          $returnData = [
             message => 'No cars available'
          ];
@@ -209,7 +209,7 @@
                       ->withHeader('Content-type', 'application/json'); 
       }
 
-      return $response->withJson($data, 200)
+      return $response->withJson($cars, 200)
                       ->withHeader('Content-type', 'application/json');
    });
 
