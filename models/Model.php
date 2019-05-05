@@ -1,11 +1,16 @@
 <?php
 include_once('Manufacturer.php');
 
-class Model{
+class Model implements iGetManufacturer{
   public $id;
-  public $manufacturer_name;
+  public $model_name;
+  private $manufacturer;
 
-  public function __construct() {
-    
+  public function __construct(Manufacturer $manufacturer) {
+    $this->manufacturer = $manufacturer;
+  }
+
+  public function getManufacturer() {
+    return $this->manufacturer->manufacturer_name;
   }
 }
