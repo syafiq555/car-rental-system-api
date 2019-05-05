@@ -172,7 +172,6 @@
      */
    $app->post('/registration', function($request, $response){
       $json = json_decode($request->getBody());
-      return $response->withJson($json);
       $user = new User();
       $user->username = $json->username;
       $user->first_name = $json->first_name;
@@ -182,7 +181,7 @@
       $user->role = 'member';
       $user->ic_number = $json->ic_number;
       $user->mobile_phone = $json->mobile_phone;
-      return $response->withJson($user);
+
       //insert user
       $db = getDatabase();
       $dbs = $db->insertUser($user);
