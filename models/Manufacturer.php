@@ -1,8 +1,8 @@
 <?php
 
 class Manufacturer {
-  private $id;
-  private $manufacturer_name;
+  public $id;
+  public $manufacturer_name;
 
   public function __construct() {
     
