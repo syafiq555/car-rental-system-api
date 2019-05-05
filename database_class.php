@@ -220,7 +220,8 @@
          $sql = "SELECT 
             c.id as car_id, 
             c.plate_number, 
-            c.price_per_hour, 
+            c.price_per_hour,
+            c.year,
             m.model_name, 
             ma.manufacturer_name
             FROM cars c
@@ -245,6 +246,7 @@
                $car->plate_number = $row['plate_number'];
                $car->id = $row['car_id'];
                $car->price_per_hour = $row['price_per_hour'];
+               $car->year = $row['year'];
 
                array_push($data, $car);
             }
