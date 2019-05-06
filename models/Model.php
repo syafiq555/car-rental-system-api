@@ -7,7 +7,7 @@ class Model implements iGetManufacturer{
   public $manufacturer_name;
   private $manufacturer;
 
-  public function __construct(Manufacturer $manufacturer) {
+  public function __construct(Manufacturer $manufacturer=null) {
     $this->manufacturer = $manufacturer;
     $this->manufacturer_name = $manufacturer->manufacturer_name;
   }

@@ -32,6 +32,6 @@ class Car implements iGetManufacturer, iGetModel, iNullCheck {
   }
 
   public function checkNull() {
-    return $this->plate_number&&$this->price_per_hour&&$this->getModelId()&&$this->year&&$this->getManufacturerId();
+    return $this->plate_number&&$this->price_per_hour&&$this->getModelId()&&$this->year;
   }
 }

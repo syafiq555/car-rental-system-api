@@ -314,9 +314,7 @@
 
    $app->post('/create_car', function ($request, $response) {
       $json = json_decode($request->getBody());
-      $manufacturer = new Manufacturer();
-      $manufacturer->id = $json->manufacturer_id;
-      $model = new Model($manufacturer);
+      $model = new Model();
       $model->id = $json->model_id;
       $car = new Car($model);
       $car->plate_number = strtolower(trim($json->plate_number));
