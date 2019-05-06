@@ -149,6 +149,44 @@
          }
       }
 
+      function createModel(Model $model) {
+         try {
+            $dbs = new DbStatus();
+
+            $dbs->status = false;
+            $dbs->error = 'none';
+            $dbs->lastinsertid = null;
+
+            $model_count = $this->checkModel($model);
+
+            if ($model_count != 0) {
+               $dbs->error = 'Model with the name already created';
+               return $dbs;
+            }
+
+            $sql = 
+            "INSERT INTO models (model_name) VALUES (:model_name)";
+
+            $stmt = $this->db->prepare($sql);  
+            $stmt->bindParam("model_name", $model->model_name);
+            $stmt->execute();
+
+            $dbs->status = true;
+            $dbs->error = "none";
+            $dbs->lastinsertid = $this->db->lastInsertId();
+
+            return $dbs;
+         } catch (PDOException $e) {
+            $errorMessage = $e->getMessage();
+
+            $dbs = new DbStatus();
+            $dbs->status = false;
+            $dbs->error = $errorMessage;
+
+            return $dbs;
+         }
+      }
+
       function insertUser(User $user) {
          try {
             $dbs = new DbStatus();
@@ -294,6 +332,15 @@
          return $data;
       }
 
+      function checkModel(Model $model) {
+         $sql = "SELECT * FROM models where model_name = :model_name LIMIT 1";
+
+         $statement = $this->db->prepare($sql);
+         $statement->bindParam('model_name', $model->model_name);
+         $statement->execute();
+         return $statement->rowCount();
+      }
+      
       function checkManufacturer(Manufacturer $manufacturer) {
          $sql = "SELECT * FROM manufacturers where manufacturer_name = :manufacturer_name LIMIT 1";
 
