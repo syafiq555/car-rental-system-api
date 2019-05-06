@@ -342,7 +342,7 @@
             ma.manufacturer_name
             FROM cars c
             join models m on c.model_id = m.id
-            join manufacturers ma on m.manufacturer_id = ma.id";
+            join manufacturers ma on m.manufacturer_id = ma.id where availability=1";
 
          $stmt = $this->db->prepare($sql);
          $stmt->execute(); 
