@@ -1,6 +1,6 @@
 <?php
 
-class Car implements iGetManufacturer, iGetModel {
+class Car implements iGetManufacturer, iGetModel, iNullCheck {
   public $id;
   public $plate_number;
   public $price_per_hour;
@@ -11,8 +11,8 @@ class Car implements iGetManufacturer, iGetModel {
 
   public function __construct(Model $model) {
     $this->model = $model;
-    $this->manufacturer_name = $model->getManufacturer();
-    $this->model_name = $model->model_name;
+    $model->getManufacturer() ? $this->manufacturer_name = $model->getManufacturer(): '';
+    $model->model_name ? $this->model_name = $model->model_name: '';
   }
 
   public function getModel() {
@@ -21,5 +21,17 @@ class Car implements iGetManufacturer, iGetModel {
 
   public function getManufacturer() {
     return $this->model->getManufacturer();
+  }
+
+  public function getManufacturerId() {
+    return $this->model->getManufacturerId();
+  }
+
+  public function getModelId() {
+    return $this->model->id;
+  }
+
+  public function checkNull() {
+    return $this->plate_number&&$this->price_per_hour&&$this->getModelId()&&$this->year&&$this->getManufacturerId();
   }
 }
