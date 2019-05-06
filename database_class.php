@@ -331,6 +331,31 @@
          return $user;
       }
 
+      function getAllManufacturers() {
+
+         $sql = "SELECT * from manufacturers";
+
+         $stmt = $this->db->prepare($sql);
+         $stmt->execute(); 
+         $row_count = $stmt->rowCount();
+
+         $data = [];
+
+         if ($row_count)
+         {
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC))
+            {
+               $manufacturer = new Manufacturer();
+               $manufacturer->manufacturer_name = $row['manufacturer_name'];
+               $manufacturer->id = $row['id'];
+
+               array_push($data, $manufacturer);
+            }
+         }
+
+         return $data;
+      }
+
       function getAllCars() {
 
          $sql = "SELECT 

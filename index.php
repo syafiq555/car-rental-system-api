@@ -94,7 +94,7 @@
          $tokenDecoded = JWT::decode(
             $token, 
             getenv('JWT_SECRET'), 
-            array('HS256')
+            ['HS256']
          );
       }
       catch(Exception $e)
@@ -195,6 +195,23 @@
       }
 
       return $response->withJson($cars, 200)
+                      ->withHeader('Content-type', 'application/json');
+   });
+
+   $app->get('/get_all_manufacturers', function($request, $response) {
+      $db = getDatabase();
+      $manufacturers = $db->getAllManufacturers();
+      $db->close();
+
+      if (sizeof($manufacturers) == 0) {
+         $returnData = [
+            message => 'No manufacturers available'
+         ];
+         return $response->withJson($returnData, 200)
+                      ->withHeader('Content-type', 'application/json'); 
+      }
+
+      return $response->withJson($manufacturers, 200)
                       ->withHeader('Content-type', 'application/json');
    });
 
