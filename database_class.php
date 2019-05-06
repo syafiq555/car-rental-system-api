@@ -187,7 +187,7 @@
             return $dbs;
          }
       }
-      
+
       function createModel(Model $model) {
          try {
             $dbs = new DbStatus();
@@ -398,6 +398,34 @@
          return $statement->rowCount();
       }
 
+      function getAllModels() {
+
+         $sql = "SELECT mo.*, ma.id as manufacturer_id FROM models mo JOIN manufacturers ma on mo.manufacturer_id = ma.id GROUP BY ma.id";
+
+         $stmt = $this->db->prepare($sql);
+         $stmt->execute(); 
+         $row_count = $stmt->rowCount();
+
+         $data = array();
+
+         if ($row_count)
+         {
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC))
+            {
+               $manufacturer = new Manufacturer();
+               $manufacturer->id = $row['manufacturer_id'];
+               $model = new Model($manufacturer);
+               $model->id = $row['id'];
+               $model->model_name = $row['model_name'];
+               $model->manufacturer_id = $model->getManufacturerId();
+
+               array_push($data, $model);
+            }
+         }
+
+         return $data;
+      }
+      
       function getAllUsers() {
 
          $sql = "SELECT *

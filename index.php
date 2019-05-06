@@ -147,7 +147,7 @@
             '/checkemail',
             '/auth',
             '/users',
-            '/get_all_cars'
+            '/get_all_cars',
          ],
          'secure' => false,
         'authenticator' => $authenticator
@@ -195,6 +195,23 @@
       }
 
       return $response->withJson($cars, 200)
+                      ->withHeader('Content-type', 'application/json');
+   });
+
+   $app->get('/get_all_models', function($request, $response) {
+      $db = getDatabase();
+      $models = $db->getAllmodels();
+      $db->close();
+
+      if (sizeof($models) == 0) {
+         $returnData = [
+            message => 'No models available'
+         ];
+         return $response->withJson($returnData, 200)
+                      ->withHeader('Content-type', 'application/json'); 
+      }
+
+      return $response->withJson($models, 200)
                       ->withHeader('Content-type', 'application/json');
    });
 
