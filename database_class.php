@@ -149,6 +149,45 @@
          }
       }
 
+      function createCar(Car $car) {
+         try {
+            $dbs = new DbStatus();
+
+            $dbs->status = false;
+            $dbs->error = 'none';
+            $dbs->lastinsertid = null;
+
+            if ($this->checkPlateNumber($car) != 0) {
+               $dbs->error = "Plate with number $car->plate_number already inserted in database";
+               return $dbs;
+            }
+
+            $sql = 
+            "INSERT INTO cars (plate_number, price_per_hour, model_id, year) VALUES (:plate_number, :price_per_hour, :model_id, :year)";
+
+            $stmt = $this->db->prepare($sql);  
+            $stmt->bindParam("plate_number", $car->plate_number);
+            $stmt->bindParam("price_per_hour", $car->price_per_hour);
+            $stmt->bindParam("model_id", $car->getModelId());
+            $stmt->bindParam("year", $car->year);
+            $stmt->execute();
+
+            $dbs->status = true;
+            $dbs->error = "none";
+            $dbs->lastinsertid = $this->db->lastInsertId();
+
+            return $dbs;
+         } catch (PDOException $e) {
+            $errorMessage = $e->getMessage();
+
+            $dbs = new DbStatus();
+            $dbs->status = false;
+            $dbs->error = $errorMessage;
+
+            return $dbs;
+         }
+      }
+      
       function createModel(Model $model) {
          try {
             $dbs = new DbStatus();
@@ -346,6 +385,15 @@
 
          $statement = $this->db->prepare($sql);
          $statement->bindParam('manufacturer_name', $manufacturer->manufacturer_name);
+         $statement->execute();
+         return $statement->rowCount();
+      }
+
+      function checkPlateNumber(Car $car) {
+         $sql = "SELECT plate_number FROM cars where plate_number = :plate_number LIMIT 1";
+
+         $statement = $this->db->prepare($sql);
+         $statement->bindParam('plate_number', $car->plate_number);
          $statement->execute();
          return $statement->rowCount();
       }
