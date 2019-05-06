@@ -15,4 +15,8 @@ class Model implements iGetManufacturer{
   public function getManufacturer() {
     return $this->manufacturer->manufacturer_name;
   }
+
+  public function getManufacturerId() {
+    return $this->manufacturer->id;
+  }
 }
