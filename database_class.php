@@ -1,6 +1,7 @@
 <?php
    include_once('interfaces/iManufacturer.php');
    include_once('interfaces/iModel.php');
+   include_once('interfaces/iCar.php');
    include_once('models/User.php');
    include_once('models/Order.php');
    include_once('models/Car.php');
