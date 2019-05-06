@@ -110,6 +110,44 @@
          } 
       }
 
+      function createManufacturer(Manufacturer $manufacturer) {
+         try {
+            $dbs = new DbStatus();
+
+            $dbs->status = false;
+            $dbs->error = 'none';
+            $dbs->lastinsertid = null;
+
+            $manufacuter_count = $this->checkManufacturer($manufacturer);
+
+            if ($manufacuter_count != 0) {
+               $dbs->error = 'Manufacturer with the name already created';
+               return $dbs;
+            }
+
+            $sql = 
+            "INSERT INTO manufacturers (manufacturer_name) VALUES (:manufacturer_name)";
+
+            $stmt = $this->db->prepare($sql);  
+            $stmt->bindParam("manufacturer_name", $manufacturer->manufacturer_name);
+            $stmt->execute();
+
+            $dbs->status = true;
+            $dbs->error = "none";
+            $dbs->lastinsertid = $this->db->lastInsertId();
+
+            return $dbs;
+         } catch (PDOException $e) {
+            $errorMessage = $e->getMessage();
+
+            $dbs = new DbStatus();
+            $dbs->status = false;
+            $dbs->error = $errorMessage;
+
+            return $dbs;
+         }
+      }
+
       function insertUser(User $user) {
          try {
             $dbs = new DbStatus();
@@ -253,6 +291,15 @@
          }
 
          return $data;
+      }
+
+      function checkManufacturer(Manufacturer $manufacturer) {
+         $sql = "SELECT * FROM manufacturers where manufacturer_name = :manufacturer_name LIMIT 1";
+
+         $statement = $this->db->prepare($sql);
+         $statement->bindParam('manufacturer_name', $manufacturer->manufacturer_name);
+         $statement->execute();
+         return $statement->rowCount();
       }
 
       function getAllUsers() {

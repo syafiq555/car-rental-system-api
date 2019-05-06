@@ -58,7 +58,7 @@
    use Slim\Middleware\TokenAuthentication;
    use Firebase\JWT\JWT;
 
-   function getLoginTokenPayload($request, $response) {
+   function getUsernameTokenPayload($request, $response) {
       $token_array = $request->getHeader('HTTP_AUTHORIZATION');
       $token = substr($token_array[0], 7);
 
@@ -70,15 +70,6 @@
             getenv('JWT_SECRET'), 
             array('HS256')
          );
-
-         //in case dotenv not working
-         /*
-         $tokenDecoded = JWT::decode(
-            $token, 
-            $GLOBALS['jwtSecretKey'], 
-            array('HS256')
-         );
-         */
       }
       catch(Exception $e)
       {
@@ -90,7 +81,33 @@
                          ->withHeader('Content-tye', 'application/json');
       }
 
-      return $tokenDecoded->login;
+      return $tokenDecoded->username;
+   }
+
+   function getRoleTokenPayload($request, $response) {
+      $token_array = $request->getHeader('HTTP_AUTHORIZATION');
+      $token = substr($token_array[0], 7);
+
+      //decode the token
+      try
+      {
+         $tokenDecoded = JWT::decode(
+            $token, 
+            getenv('JWT_SECRET'), 
+            array('HS256')
+         );
+      }
+      catch(Exception $e)
+      {
+         $data = Array(
+            "jwt_status" => "token_invalid"
+         ); 
+
+         return $response->withJson($data, 401)
+                         ->withHeader('Content-tye', 'application/json');
+      }
+
+      return $tokenDecoded->role;
    }
 
    $config = [
@@ -126,8 +143,6 @@
    $app->add(new TokenAuthentication([
         'path' => '/', //secure route - need token
         'passthrough' => [ //public route, no token needed
-            '/hello',
-            '/calc',
             '/registration',
             '/checkemail',
             '/auth',
@@ -137,36 +152,6 @@
          'secure' => false,
         'authenticator' => $authenticator
    ]));
-   
-   //public route with 1 parameter
-   $app->get('/hello/[{name}]', function($request, $response, $args){
-
-      $name = $args['name'];
-      $msg = "Hello $name, welcome to RESTFul world";
-
-      $data = array(
-         'msg' => $msg
-      );
-
-      return $response->withJson($data, 200, JSON_PRETTY_PRINT);
-   });
-
-   //public route with more than one parameters
-   $app->get('/calc[/{num1}/{num2}]', function($request, $response, $args){
-
-      $num1 = $args['num1'];
-      $num2 = $args['num2'];
-      $total = $num1 + $num2;
-
-      $msg = "$num1 + $num2 = $total";
-
-      $data = array(
-         'msg' => $msg
-      );
-
-      return $response->withJson($data, 200, JSON_PRETTY_PRINT);
-   });
-
    /**
      * Public route /registration for member registration
      */
@@ -306,7 +291,7 @@
    //POST - INSERT CONTACT - secure route - need token
    $app->post('/contacts', function($request, $response){
 
-      $ownerlogin = getLoginTokenPayload($request, $response);  
+      $ownerlogin = getUsernameTokenPayload($request, $response);  
       
       //form data
       $json = json_decode($request->getBody());
@@ -325,6 +310,27 @@
 
       return $response->withJson($data, 200)
                       ->withHeader('Content-type', 'application/json'); 
+   });
+
+   $app->post('/create_manufacturer', function ($request, $response) {
+      $json = json_decode($request->getBody());
+      $manufacturer = new Manufacturer();
+      $manufacturer->manufacturer_name = strtolower(trim($json->manufacturer_name));
+
+      if (!$manufacturer->manufacturer_name)
+         return $response->withJson('Manufacturer name cannot be null', 406)->withHeader('Content-Type', 'application/json');
+
+      $role = getRoleTokenPayload($request, $response);
+
+      if ($role != 'admin') {
+         return $response->withJson('Unauthorized', 401)->withHeader('Content-Type', 'application/json');
+      }
+
+      $db = getDatabase();
+      $insertStatus = $db->createManufacturer($manufacturer);
+      
+      return $response->withJson($insertStatus, 200)->withHeader('Content-Type', 'application/json');
+
    });
 
    //GET - ALL USERS
