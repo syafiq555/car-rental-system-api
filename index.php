@@ -312,6 +312,34 @@
                       ->withHeader('Content-type', 'application/json'); 
    });
 
+   $app->post('/create_car', function ($request, $response) {
+      $json = json_decode($request->getBody());
+      $manufacturer = new Manufacturer();
+      $manufacturer->id = $json->manufacturer_id;
+      $model = new Model($manufacturer);
+      $model->id = $json->model_id;
+      $car = new Car($model);
+      $car->plate_number = strtolower(trim($json->plate_number));
+      $car->price_per_hour = $json->price_per_hour;
+      $car->year = $json->year;
+      
+      if (!$car->checkNull())
+         return $response->withJson('One of the inputs are null', 406)->withHeader('Content-Type', 'application/json');
+
+      $role = getRoleTokenPayload($request, $response);
+
+      if ($role != 'admin') {
+         return $response->withJson('Unauthorized', 401)->withHeader('Content-Type', 'application/json');
+      }
+
+      $db = getDatabase();
+      $insertStatus = $db->createCar($car);
+      $db->close();
+
+      return $response->withJson($insertStatus, 200)->withHeader('Content-Type', 'application/json');
+
+   });
+
    $app->post('/create_manufacturer', function ($request, $response) {
       $json = json_decode($request->getBody());
       $manufacturer = new Manufacturer();
@@ -328,7 +356,31 @@
 
       $db = getDatabase();
       $insertStatus = $db->createManufacturer($manufacturer);
-      
+      $db->close();
+
+      return $response->withJson($insertStatus, 200)->withHeader('Content-Type', 'application/json');
+
+   });
+
+   $app->post('/create_model', function ($request, $response) {
+      $json = json_decode($request->getBody());
+      $manufacturer = new Manufacturer();
+      $manufacturer->id = $json->manufacturer_id;
+      $model = new Model($manufacturer);
+      $model->model_name = $json->model_name;
+
+      if (!$model->model_name)
+         return $response->withJson('Model name cannot be null', 406)->withHeader('Content-Type', 'application/json');
+
+      $role = getRoleTokenPayload($request, $response);
+
+      if ($role != 'admin') {
+         return $response->withJson('Unauthorized', 401)->withHeader('Content-Type', 'application/json');
+      }
+
+      $db = getDatabase();
+      $insertStatus = $db->createModel($model);
+      $db->close();
       return $response->withJson($insertStatus, 200)->withHeader('Content-Type', 'application/json');
 
    });
