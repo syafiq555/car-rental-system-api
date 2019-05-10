@@ -309,7 +309,7 @@
       }
 
       function authenticateUser($username) {
-         $sql = "SELECT username, password, role
+         $sql = "SELECT username, password, role, id
                  FROM users
                  WHERE username = :username";        
 
