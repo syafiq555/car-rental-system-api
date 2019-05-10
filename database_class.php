@@ -326,6 +326,7 @@
                $user->username = $row['username'];
                $user->password = $row['password'];
                $user->role = $row['role'];
+               $user->id = $row['id'];
             }
          }
 
