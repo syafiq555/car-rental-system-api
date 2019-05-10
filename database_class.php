@@ -204,10 +204,11 @@
             }
 
             $sql = 
-            "INSERT INTO models (model_name) VALUES (:model_name)";
+            "INSERT INTO models (model_name, manufacturer_id) VALUES (:model_name, :manufacturer_id)";
 
             $stmt = $this->db->prepare($sql);  
             $stmt->bindParam("model_name", $model->model_name);
+            $stmt->bindParam("manufacturer_id", $model->getManufacturerId());
             $stmt->execute();
 
             $dbs->status = true;
