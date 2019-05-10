@@ -308,7 +308,8 @@
             $returndata = array(
                'status' => 1,
                'token' => $token,
-               'role' => $data->role
+               'role' => $data->role,
+               'id' => $data->id
             );                
          } else {
             //wrong password
@@ -395,6 +396,29 @@
    });
 
    $app->post('/create_model', function ($request, $response) {
+      $json = json_decode($request->getBody());
+      $manufacturer = new Manufacturer();
+      $manufacturer->id = $json->manufacturer_id;
+      $model = new Model($manufacturer);
+      $model->model_name = $json->model_name;
+
+      if (!$model->model_name)
+         return $response->withJson('Model name cannot be null', 406)->withHeader('Content-Type', 'application/json');
+
+      $role = getRoleTokenPayload($request, $response);
+
+      if ($role != 'admin') {
+         return $response->withJson('Unauthorized', 401)->withHeader('Content-Type', 'application/json');
+      }
+
+      $db = getDatabase();
+      $insertStatus = $db->createModel($model);
+      $db->close();
+      return $response->withJson($insertStatus, 200)->withHeader('Content-Type', 'application/json');
+
+   });
+
+   $app->post('/create_order', function ($request, $response) {
       $json = json_decode($request->getBody());
       $manufacturer = new Manufacturer();
       $manufacturer->id = $json->manufacturer_id;
