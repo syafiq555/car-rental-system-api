@@ -8,6 +8,7 @@ class Car implements iGetManufacturer, iGetModel, iNullCheck {
   public $model_name;
   public $manufacturer_name;
   public $year;
+  public $approved;
 
   public function __construct(Model $model) {
     $this->model = $model;
