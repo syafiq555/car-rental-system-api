@@ -426,7 +426,7 @@
 
       function getAllModels() {
 
-         $sql = "SELECT mo.*, ma.id as manufacturer_id FROM models mo JOIN manufacturers ma on mo.manufacturer_id = ma.id GROUP BY ma.id";
+         $sql = "SELECT mo.*, ma.id as manufacturer_id FROM models mo JOIN manufacturers ma on mo.manufacturer_id = ma.id group by mo.id";
 
          $stmt = $this->db->prepare($sql);
          $stmt->execute(); 
