@@ -13,8 +13,6 @@ class Car implements iGetManufacturer, iGetModel, iNullCheck {
   public function __construct(Model $model=null) {
     if ($model) {
       $this->model = $model;
-      $model->getManufacturer() ? $this->manufacturer_name = $model->getManufacturer(): '';
-      $model->model_name ? $this->model_name = $model->model_name: '';
     }
   }
 
