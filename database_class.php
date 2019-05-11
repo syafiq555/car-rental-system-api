@@ -150,23 +150,36 @@
       }
 
       function checkOrder($user_id) {
-         try {
-            $sql = "SELECT * FROM orders where user_id = :user_id LIMIT 1";
+         $sql = "SELECT * FROM orders where user_id = :user_id LIMIT 1";
 
-            $statement = $this->db->prepare($sql);
-            $statement->bindParam('user_id', $user_id);
-            $statement->execute();
-            return $statement->rowCount();
-         } catch(PDOException $e) {
-            $errorMessage = $e->getMessage();
+         $statement = $this->db->prepare($sql);
+         $statement->bindParam('user_id', $user_id);
+         $statement->execute();
+         return $statement->rowCount();
+      }
 
-            $dbs = new DbStatus();
-            $dbs->status = false;
-            $dbs->error = $errorMessage;
+      function getCarById($id) {
+         $sql = "SELECT * FROM cars where id = :id LIMIT 1";
 
-            return $dbs;
+         $stmt = $this->db->prepare($sql);
+         $stmt->bindParam('id', $id);
+         $stmt->execute();
+         $row_count = $stmt->rowCount();
+
+         if ($row_count)
+         {
+            $row = $stmt->fetch();
+            $model = new Model();
+            $model->id = $row['model_id'];
+            $car = new Car($model);
+            $car->id = $row['id'];
+            $car->plate_number = $row['plate_number'];
+            $car->price_per_hour = $row['price_per_hour'];
+            $car->year = $row['year'];
+            $car->availability = $row['availability'];
+            return $car;
          }
-      } 
+      }
 
       function createOrder(Order $order) {
          try {
@@ -177,7 +190,6 @@
             $dbs->lastinsertid = null;
 
             $order_count = $this->checkOrder($order->getUserId());
-
             if ($order_count != 0) {
                $dbs->error = 'The user already ordered a car';
                return $dbs;
