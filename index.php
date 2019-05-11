@@ -446,22 +446,21 @@
 
    $app->post('/create_order', function ($request, $response) {
       $json = json_decode($request->getBody());
-      $manufacturer = new Manufacturer();
-      $manufacturer->id = $json->manufacturer_id;
-      $model = new Model($manufacturer);
-      $model->model_name = $json->model_name;
-
-      if (!$model->model_name)
-         return $response->withJson('Model name cannot be null', 406)->withHeader('Content-Type', 'application/json');
+      $car = new Car();
+      $car->id = $json->car_id;
+      $user = new User();
+      $user->id = getIdTokenPayload($request, $response);
+      $order = new Order($car, $user);
+      $order->total_price = $json->total_price;
+      $order->date_from = $json->date_from;
+      $order->date_to = $json->date_to;
+      $order->time_from = $json->time_from;
+      $order->time_to = $json->time_to;
 
       $role = getRoleTokenPayload($request, $response);
 
-      if ($role != 'admin') {
-         return $response->withJson('Unauthorized', 401)->withHeader('Content-Type', 'application/json');
-      }
-
       $db = getDatabase();
-      $insertStatus = $db->createModel($model);
+      $insertStatus = $db->createOrder($order);
       $db->close();
       return $response->withJson($insertStatus, 200)->withHeader('Content-Type', 'application/json');
 
