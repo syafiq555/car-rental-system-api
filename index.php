@@ -457,9 +457,7 @@
 
    $app->delete('/cancel_order/[{id}]', function($request, $response, $args) {
       
-      $id = $args['id'];
-      return $response->withJson($id, 200)
-      ->withHeader('Content-type', 'application/json');     
+      $id = $args['id'];    
       $db = getDatabase();
       $dbs = $db->deleteOrder($id);
       $db->close();
