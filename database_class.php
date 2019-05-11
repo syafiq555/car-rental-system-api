@@ -169,6 +169,7 @@
                $statement = $this->db->prepare($sql);
                $statement->bindParam('order_id', $order_id);
                $statement->execute();
+               $dbs->status = true;
                return $dbs;
             } catch(PDOException $e) {
                $dbs->error($e->getMessage());
