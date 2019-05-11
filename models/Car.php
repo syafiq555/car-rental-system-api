@@ -10,10 +10,12 @@ class Car implements iGetManufacturer, iGetModel, iNullCheck {
   public $year;
   public $approved;
 
-  public function __construct(Model $model) {
-    $this->model = $model;
-    $model->getManufacturer() ? $this->manufacturer_name = $model->getManufacturer(): '';
-    $model->model_name ? $this->model_name = $model->model_name: '';
+  public function __construct(Model $model=null) {
+    if ($model) {
+      $this->model = $model;
+      $model->getManufacturer() ? $this->manufacturer_name = $model->getManufacturer(): '';
+      $model->model_name ? $this->model_name = $model->model_name: '';
+    }
   }
 
   public function getModel() {
