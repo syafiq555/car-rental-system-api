@@ -149,6 +149,70 @@
          }
       }
 
+      function checkOrder($user_id) {
+         try {
+            $sql = "SELECT * FROM orders where user_id = :user_id LIMIT 1";
+
+            $statement = $this->db->prepare($sql);
+            $statement->bindParam('user_id', $user_id);
+            $statement->execute();
+            return $statement->rowCount();
+         } catch(PDOException $e) {
+            $errorMessage = $e->getMessage();
+
+            $dbs = new DbStatus();
+            $dbs->status = false;
+            $dbs->error = $errorMessage;
+
+            return $dbs;
+         }
+      } 
+
+      function createOrder(Order $order) {
+         try {
+            $dbs = new DbStatus();
+
+            $dbs->status = false;
+            $dbs->error = 'none';
+            $dbs->lastinsertid = null;
+
+            $order_count = $this->checkOrder($order->getUserId());
+
+            if ($order_count != 0) {
+               $dbs->error = 'The user already ordered a car';
+               return $dbs;
+            }
+
+            $sql = 
+            "INSERT INTO orders (car_id, user_id, approved, total_price, date_from, date_to, time_from, time_to) VALUES (:car_id, :user_id, :approved, :total_price, :date_from, :date_to, :time_from, :time_to)";
+
+            $stmt = $this->db->prepare($sql);  
+            $stmt->bindParam("car_id", $order->getCarId());
+            $stmt->bindParam("user_id", $order->getUserId());
+            $stmt->bindParam("approved", $order->approved);
+            $stmt->bindParam("total_price", $order->total_price);
+            $stmt->bindParam("date_from", $order->date_from);
+            $stmt->bindParam("date_to", $order->date_to);
+            $stmt->bindParam("time_from", $order->time_from);
+            $stmt->bindParam("time_to", $order->time_to);
+            $stmt->execute();
+
+            $dbs->status = true;
+            $dbs->error = "none";
+            $dbs->lastinsertid = $this->db->lastInsertId();
+
+            return $dbs;
+         } catch (PDOException $e) {
+            $errorMessage = $e->getMessage();
+
+            $dbs = new DbStatus();
+            $dbs->status = false;
+            $dbs->error = $errorMessage;
+
+            return $dbs;
+         }
+      }
+
       function createCar(Car $car) {
          try {
             $dbs = new DbStatus();
