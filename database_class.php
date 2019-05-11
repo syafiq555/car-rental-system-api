@@ -158,6 +158,24 @@
          return $statement->rowCount();
       }
 
+      function deleteOrder($order_id) {
+         $dbs = new DbStatus();
+
+            $dbs->status = false;
+            $dbs->error = 'none';
+            try {
+               $sql = "DELETE from orders where id=:order_id";
+
+               $statement = $this->db->prepare($sql);
+               $statement->bindParam('order_id', $order_id);
+               $statement->execute();
+               return $dbs;
+            } catch(PDOException $e) {
+               $dbs->error($e->getMessage());
+               return $dbs;
+            }
+      }
+
       function getUserOrder($user_id) {
          $sql = "SELECT o.*, c.*, c.id as car_id, mo.*, mo.id as model_id, ma.*, ma.id as manufacturer_id FROM orders o JOIN cars c ON o.car_id=c.id JOIN models mo ON mo.id=c.model_id JOIN manufacturers ma ON ma.id=mo.manufacturer_id where user_id = :user_id LIMIT 1";
 

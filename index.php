@@ -455,6 +455,23 @@
       return $response->withJson($order, 200)->withHeader('Content-Type', 'application/json');
    });
 
+   $app->delete('/cancel_order/[{id}]', function($request, $response, $args) {
+      
+      $id = $args['id'];
+
+      $db = getDatabase();
+      $dbs = $db->deleteOrder($id);
+      $db->close();
+
+      $data = Array(
+         "deletestatus" => $dbs->status,
+         "error" => $dbs->error
+      );
+
+      return $response->withJson($data, 200)
+                      ->withHeader('Content-type', 'application/json');     
+   });
+
    $app->post('/create_order', function ($request, $response) {
       $db = getDatabase();
       $json = json_decode($request->getBody());
