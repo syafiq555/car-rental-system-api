@@ -84,6 +84,32 @@
       return $tokenDecoded->username;
    }
 
+   function getIdTokenPayload($request, $response) {
+      $token_array = $request->getHeader('HTTP_AUTHORIZATION');
+      $token = substr($token_array[0], 7);
+
+      //decode the token
+      try
+      {
+         $tokenDecoded = JWT::decode(
+            $token, 
+            getenv('JWT_SECRET'), 
+            array('HS256')
+         );
+      }
+      catch(Exception $e)
+      {
+         $data = Array(
+            "jwt_status" => "token_invalid"
+         ); 
+
+         return $response->withJson($data, 401)
+                         ->withHeader('Content-tye', 'application/json');
+      }
+
+      return $tokenDecoded->id;
+   }
+
    function getRoleTokenPayload($request, $response) {
       $token_array = $request->getHeader('HTTP_AUTHORIZATION');
       $token = substr($token_array[0], 7);
