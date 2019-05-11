@@ -449,6 +449,7 @@
       $json = json_decode($request->getBody());
       $car = $db->getCarById($json->car_id);
       $hour = $json->hour;
+      return $response->withJson($json, 200)->withHeader('Content-Type', 'application/json');
       
       $total_price = $hour * $car->price_per_hour;
       $user = new User();
@@ -459,8 +460,6 @@
       $order->date_to = $json->date_to;
       $order->time_from = $json->time_from;
       $order->time_to = $json->time_to;
-
-      $role = getRoleTokenPayload($request, $response);
 
       $insertStatus = $db->createOrder($order);
       $db->close();
