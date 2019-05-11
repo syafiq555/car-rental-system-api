@@ -16,5 +16,14 @@ class Order {
   public function __construct(Car $car, User $user) {
     $this->car = $car;
     $this->user = $user;
+    $this->approved = 0;
+  }
+
+  public function getUserId() {
+    return $this->user->id;
+  }
+
+  public function getCarId() {
+    return $this->car->id;
   }
 }
