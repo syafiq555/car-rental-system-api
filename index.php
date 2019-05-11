@@ -445,13 +445,16 @@
    });
 
    $app->post('/create_order', function ($request, $response) {
+      $db = getDatabase();
       $json = json_decode($request->getBody());
-      $car = new Car();
-      $car->id = $json->car_id;
+      $car = $db->getCarById($json->car_id);
+      $hour = $json->hour;
+      
+      $total_price = $hour * $car->price_per_hour;
       $user = new User();
       $user->id = getIdTokenPayload($request, $response);
       $order = new Order($car, $user);
-      $order->total_price = $json->total_price;
+      $order->total_price = $total_price;
       $order->date_from = $json->date_from;
       $order->date_to = $json->date_to;
       $order->time_from = $json->time_from;
@@ -459,7 +462,6 @@
 
       $role = getRoleTokenPayload($request, $response);
 
-      $db = getDatabase();
       $insertStatus = $db->createOrder($order);
       $db->close();
       return $response->withJson($insertStatus, 200)->withHeader('Content-Type', 'application/json');
