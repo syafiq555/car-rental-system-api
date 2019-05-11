@@ -177,7 +177,7 @@
       }
 
       function getUserOrder($user_id) {
-         $sql = "SELECT o.*, c.*, c.id as car_id, mo.*, mo.id as model_id, ma.*, ma.id as manufacturer_id FROM orders o JOIN cars c ON o.car_id=c.id JOIN models mo ON mo.id=c.model_id JOIN manufacturers ma ON ma.id=mo.manufacturer_id where user_id = :user_id LIMIT 1";
+         $sql = "SELECT o.*, o.id, c.id as car_id,  mo.model_name, ma.manufacturer_name FROM orders o JOIN cars c ON o.car_id=c.id JOIN models mo ON mo.id=c.model_id JOIN manufacturers ma ON ma.id=mo.manufacturer_id where user_id = :user_id LIMIT 1";
 
          $statement = $this->db->prepare($sql);
          $statement->bindParam('user_id', $user_id);
