@@ -191,7 +191,7 @@
 
             $order_count = $this->checkOrder($order->getUserId());
             if ($order_count != 0) {
-               $dbs->error = 'The user already ordered a car';
+               $dbs->error = 'You already ordered a car';
                return $dbs;
             }
 
