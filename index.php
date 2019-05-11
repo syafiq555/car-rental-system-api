@@ -449,7 +449,7 @@
       $json = json_decode($request->getBody());
       $car = $db->getCarById($json->car_id);
       $hour = $json->hour;
-      return $response->withJson($json, 200)->withHeader('Content-Type', 'application/json');
+      return $response->withJson($json->car_id, 200)->withHeader('Content-Type', 'application/json');
       
       $total_price = $hour * $car->price_per_hour;
       $user = new User();
