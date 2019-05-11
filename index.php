@@ -444,6 +444,17 @@
 
    });
 
+   $app->get('/get_user_order', function($request, $response) {
+      $db = getDatabase();
+
+      $user = new User();
+      $user->id = getIdTokenPayload($request, $response);
+
+      $order = $db->getUserOrder($user->id);
+      $db->close();
+      return $response->withJson($order, 200)->withHeader('Content-Type', 'application/json');
+   });
+
    $app->post('/create_order', function ($request, $response) {
       $db = getDatabase();
       $json = json_decode($request->getBody());
