@@ -158,6 +158,15 @@
          return $statement->rowCount();
       }
 
+      function getUserOrder($user_id) {
+         $sql = "SELECT * FROM orders where user_id = :user_id LIMIT 1";
+
+         $statement = $this->db->prepare($sql);
+         $statement->bindParam('user_id', $user_id);
+         $statement->execute();
+         return $statement->fetch(PDO::FETCH_ASSOC);
+      }
+
       function getCarById($id) {
          $sql = "SELECT * FROM cars where id = :id LIMIT 1";
 
