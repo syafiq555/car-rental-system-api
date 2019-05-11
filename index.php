@@ -327,7 +327,7 @@
                "iss" => "car_rental_system.net", //token issuer
                "iat" => $jwtIAT, //issued at time
                "exp" => $jwtExp, //expire
-               "role" => $data->role
+               "id" => $data->id
             ];
             $token = JWT::encode($jwtToken, getenv('JWT_SECRET'));
 
@@ -335,7 +335,6 @@
                'status' => 1,
                'token' => $token,
                'role' => $data->role,
-               'id' => $data->id
             );                
          } else {
             //wrong password
