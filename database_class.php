@@ -200,7 +200,7 @@
                $user = new User();
                $user->id = $row['user_id'];
                $manufacturer = new Manufacturer();
-               $manufacturer->id = $row['manufacturer_name'];
+               $manufacturer->manufacturer_name = $row['manufacturer_name'];
                $model = new Model($manufacturer);
                $model->model_name = $row['model_name'];
                $car = new Car($model);
