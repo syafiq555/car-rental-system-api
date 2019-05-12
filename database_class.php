@@ -199,7 +199,11 @@
             while($row = $statement->fetch(PDO::FETCH_ASSOC)) {
                $user = new User();
                $user->id = $row['user_id'];
-               $car = new Car();
+               $manufacturer = new Manufacturer();
+               $manufacturer->id = $row['manufacturer_name'];
+               $model = new Model($manufacturer);
+               $model->model_name = $row['model_name'];
+               $car = new Car($model);
                $car->id = $row['car_id'];
                $order = new Order($car, $user);
                $order->id = $row['id'];
