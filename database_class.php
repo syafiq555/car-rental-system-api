@@ -177,6 +177,35 @@
             }
       }
 
+      function updateOrder($order_id, $decision, $car_id) {
+         $dbs = new DbStatus();
+         $dbs->error = null;
+         try {
+            $sql = "UPDATE orders set approved=:decision where id=:order_id";
+            $sql2 = "UPDATE cars set availability=:availability where id=:car_id";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam('decision', $decision);
+            $stmt->bindParam('order_id', $order_id);
+            
+            $stmt2; 
+            $availability;
+            
+            if ($decision != 2) {
+               $availability = 0;
+               $stmt2 = $this->db->prepare($sql2);
+               $stmt2->bindParam('availability', $availability);
+               $stmt2->bindParam('car_id', $car_id);
+               $stmt2->execute();
+            }
+
+            $stmt->execute();
+            return $dbs;
+         } catch(PDOException $e) {
+            $dbs->error = $e->getMessage();
+            return $dbs;
+         }
+      }
+
       function getUserOrder($user_id) {
          $sql = "SELECT o.*, o.id, c.id as car_id, c.plate_number, c.price_per_hour, c.year, mo.model_name, ma.manufacturer_name FROM orders o JOIN cars c ON o.car_id=c.id JOIN models mo ON mo.id=c.model_id JOIN manufacturers ma ON ma.id=mo.manufacturer_id where user_id = :user_id LIMIT 1";
 

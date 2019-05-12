@@ -444,6 +444,41 @@
 
    });
 
+   $app->put('/approve[/{id}/{decision}]', function($request, $response, $args) {
+      $user_id = $args['id'];
+      $decision = $args['decision'];
+
+      $db = getDatabase();
+
+      $role = getRoleTokenPayload($request, $response);
+      
+      $returnData = [
+         'error' => null,
+         'changedData' => false
+      ];
+
+      if($role != 'admin') {
+         $returnData['error'] = 'Permission failure';
+         return $response->withJson($returnData, 200)->withHeader('Content-Type', 'application/json');
+      }
+
+      $order = $db->getUserOrder($user_id);
+      if($order['approved'] == 1 || $order['approved'] == 2) {
+         $returnData['error'] = 'Can\'t change the order that already been rejected or accepted';
+         return $response->withJson($returnData, 200)->withHeader('Content-Type', 'application/json');
+      }
+
+      $dbs = $db->updateOrder($order['id'], $decision, $order['car_id']);
+      $db->close();
+      if($dbs->error) {
+         $returnData['error'] = $dbs->error;
+         return $response->withJson($returnData, 200)->withHeader('Content-Type', 'application/json');
+      }
+
+      $returnData['changedData'] = true;
+      return $response->withJson($returnData, 200)->withHeader('Content-Type', 'application/json');
+   });
+
    $app->get('/get_all_orders', function($request, $response) {
       $db = getDatabase();
 
