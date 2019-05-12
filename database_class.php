@@ -186,6 +186,35 @@
          return $statement->fetch(PDO::FETCH_ASSOC);
       }
 
+      function getAllOrders() {
+         $sql = "SELECT o.*, o.id, c.id as car_id, c.plate_number, c.price_per_hour, c.year, mo.model_name, ma.manufacturer_name FROM orders o JOIN cars c ON o.car_id=c.id JOIN models mo ON mo.id=c.model_id JOIN manufacturers ma ON ma.id=mo.manufacturer_id";
+
+         $statement = $this->db->prepare($sql);
+         $statement->execute();
+         $rowCount = $statement->rowCount();
+
+         $orders = [];
+
+         if($rowCount) {
+            while($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+               $user = new User();
+               $user->id = $row['user_id'];
+               $car = new Car();
+               $car->id = $row['car_id'];
+               $order = new Order($car, $user);
+               $order->id = $row['id'];
+               $order->approved = $row['approved'];
+               $order->date_from = $row['date_from'];
+               $order->date_to = $row['date_to'];
+               $order->time_from = $row['time_from'];
+               $order->time_to = $row['time_to'];
+               $order->total_price = $row['total_price'];
+               array_push($orders, $order);
+            }
+            return $orders;
+         }
+      }
+
       function getCarById($id) {
          $sql = "SELECT * FROM cars where id = :id LIMIT 1";
 

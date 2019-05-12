@@ -444,6 +444,27 @@
 
    });
 
+   $app->get('/get_all_orders', function($request, $response) {
+      $db = getDatabase();
+
+      $role = getRoleTokenPayload($request, $response);
+      
+      $returnData = [
+         'error' => null,
+         'orders' => null
+      ];
+
+      if($role != 'admin') {
+         $returnData['error'] = 'Permission failure';
+         return $response->withJson($returnData, 200)->withHeader('Content-Type', 'application/json');
+      }
+
+      $orders = $db->getAllOrders();
+      $db->close();
+      $returnData['orders'] = $orders;
+      return $response->withJson($returnData, 200)->withHeader('Content-Type', 'application/json');
+   });
+
    $app->get('/get_user_order', function($request, $response) {
       $db = getDatabase();
 
