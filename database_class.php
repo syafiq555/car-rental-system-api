@@ -205,6 +205,9 @@
                $model->model_name = $row['model_name'];
                $car = new Car($model);
                $car->id = $row['car_id'];
+               $car->manufacturer_name = $car->getManufacturer();
+               $car->model_name = $car->getModel();
+               $car->plate_number = $row['plate_number'];
                $order = new Order($car, $user);
                $order->id = $row['id'];
                $order->approved = $row['approved'];
