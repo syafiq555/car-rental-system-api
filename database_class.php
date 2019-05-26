@@ -559,6 +559,8 @@
                $car->id = $row['car_id'];
                $car->price_per_hour = $row['price_per_hour'];
                $car->year = $row['year'];
+               $car->manufacturer_name = $car->getManufacturer();
+               $car->model_name = $car->getModel();
 
                array_push($data, $car);
             }
